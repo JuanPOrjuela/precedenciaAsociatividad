@@ -139,7 +139,7 @@ F   –       –       –       –       ( E )  –  num   –
 | `calculadora.py`        | Une todo: texto → resultado. |
 | `main.py`               | Programa de consola. |
 | `tests/`                | Pruebas con pytest. |
-| `conftest.py`           | Archivo vacío que le permite a pytest importar los módulos de la raíz. |
+| `conftest.py`           | Configuración de pytest: deja importar los módulos de la raíz y ordena la salida de `pytest -v`. |
 
 **El detalle de la asociatividad por la izquierda.** Al quitar la recursión izquierda, G1 queda con
 `E' → - T E'`, que es recursiva por la derecha, así que el árbol de derivación se inclina a la derecha
@@ -153,7 +153,36 @@ derecho se resuelve primero.
 python -m pytest -v
 ```
 
-182 pruebas, todas pasan:
+Con `-v` las pruebas salen agrupadas por tema, y cada línea dice la gramática, la operación y el
+resultado:
+
+```
+========================= Calculadora LL(1): pruebas ==========================
+182 pruebas encontradas
+
+------------------------------ test_conjuntos.py ------------------------------
+
+Ejemplos de la presentación 05
+  ok     Ejemplo     PRIMEROS(A)             { ant, big, cat, cow }
+  ok     Ejemplo     SIGUIENTES(C)           { all, cat, cow, $ }  (la diapositiva 16 dice { all, $ })
+  ...
+
+----------------------------- test_calculadora.py -----------------------------
+
+Precedencia y asociatividad (analizador con tabla LL(1))
+  ok     G1          8 - 3 - 2               ((8 - 3) - 2) = 3
+  ok     G1          2 + 3 * 4               (2 + (3 * 4)) = 14
+  ...
+  ok     G3          2 + 3 * 4               ((2 + 3) * 4) = 20
+  ...
+
+============================= 182 passed in 0.62s =============================
+```
+
+Este formato lo arma `conftest.py`. Si alguna prueba falla, aparece como `FALLA` y al final pytest
+muestra el detalle de siempre. Con `python -m pytest` (sin `-v`) se ve la salida normal de puntos.
+
+Son 182 pruebas y todas pasan:
 
 - **`test_conjuntos.py`**: PRIMEROS, SIGUIENTES y PRED contra los ejemplos de las diapositivas; que
   G1-G4 sean LL(1) y que las originales y la ambigua no; que las transformaciones den las gramáticas finales.
